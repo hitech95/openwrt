@@ -130,6 +130,21 @@ endef
 
 $(eval $(call KernelPackage,leds-pca963x))
 
+define KernelPackage/leds-spi-byte
+  SUBMENU:=$(LEDS_MENU)
+  TITLE:=1-Byte LED controller
+  DEPENDS := @!(LINUX_4_4||LINUX_4_9||LINUX_4_14)
+  KCONFIG:=CONFIG_LEDS_SPI_BYTE
+  FILES:=$(LINUX_DIR)/drivers/leds/leds-spi-byte.ko
+  AUTOLOAD:=$(call AutoLoad,60,leds-spi-byte,1)
+endef
+
+define KernelPackage/leds-spi-byte/description
+ Kernel module for simple SPI LED controllers that use only a single byte for
+ setting the brightness. For example used in Ubiquiti airCube ISP.
+endef
+
+$(eval $(call KernelPackage,leds-spi-byte))
 
 define KernelPackage/leds-pwm
   SUBMENU:=$(LEDS_MENU)
