@@ -100,8 +100,6 @@ proto_map_setup() {
 				json_close_array
 			fi
 		json_close_object
-
-
 		proto_close_tunnel
 	elif [ "$maptype" = "map-t" -a -f "/proc/net/nat46/control" ]; then
 		proto_init_update "$link" 1
@@ -132,31 +130,30 @@ proto_map_setup() {
 	[ -n "$zone" ] && json_add_string zone "$zone"
 
 	json_add_array firewall
-	  if [ -z "$(eval "echo \$RULE_${k}_PORTSETS")" ]; then
-	    json_add_object ""
-	      json_add_string type nat
-	      json_add_string target SNAT
-	      json_add_string family inet
-	      json_add_string snat_ip $(eval "echo \$RULE_${k}_IPV4ADDR")
-	    json_close_object
-	  else
-	    for portset in $(eval "echo \$RULE_${k}_PORTSETS"); do
-              for proto in icmp tcp udp; do
-	        json_add_object ""
-	          json_add_string type nat
-	          json_add_string target SNAT
-	          json_add_string family inet
-	          json_add_string proto "$proto"
-                  json_add_boolean connlimit_ports 1
-                  json_add_string snat_ip $(eval "echo \$RULE_${k}_IPV4ADDR")
-                  json_add_string snat_port "$portset"
-	        json_close_object
-              done
-	    done
-	  fi
-	  if [ "$maptype" = "map-t" ]; then
+	if [ -z "$(eval "echo \$RULE_${k}_PORTSETS")" ]; then
+		json_add_object ""
+		json_add_string type nat
+		json_add_string target SNAT
+		json_add_string family inet
+		json_add_string snat_ip $(eval "echo \$RULE_${k}_IPV4ADDR")
+		json_close_object
+	else
+		for portset in $(eval "echo \$RULE_${k}_PORTSETS"); do
+			for proto in icmp tcp udp; do
+				json_add_object ""
+				json_add_string type nat
+				json_add_string target SNAT
+				json_add_string family inet
+				json_add_string proto "$proto"
+				json_add_boolean connlimit_ports 1
+				json_add_string snat_ip $(eval "echo \$RULE_${k}_IPV4ADDR")
+				json_add_string snat_port "$portset"
+				json_close_object
+			done
+		done
+	fi
+	if [ "$maptype" = "map-t" ]; then
 		[ -z "$zone" ] && zone=$(fw3 -q network $iface 2>/dev/null)
-
 		[ -n "$zone" ] && {
 			json_add_object ""
 				json_add_string type rule
@@ -180,7 +177,7 @@ proto_map_setup() {
 			json_close_object
 		}
 		proto_add_ipv6_route $(eval "echo \$RULE_${k}_IPV6ADDR") 128
-	  fi
+	fi
 	json_close_array
 	proto_close_data
 
