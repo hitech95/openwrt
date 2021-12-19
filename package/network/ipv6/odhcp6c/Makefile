@@ -8,14 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=odhcp6c
-PKG_RELEASE:=16
+PKG_RELEASE:=18
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/odhcp6c.git
-PKG_SOURCE_DATE:=2021-01-09
-PKG_SOURCE_VERSION:=53f07e90b7f1da6977143a488dd5cb73a33b233b
-PKG_MIRROR_HASH:=ad3665b611d19177996771b11df28d92f066b0125484ea3bdfc0b3185c14f90e
-PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
+PKG_SOURCE_URL=https://github.com/hitech95/openwrt_odhcp6c
+PKG_SOURCE_DATE:=2021-12-19
+PKG_SOURCE_VERSION:=f2a9a2fd56935cce4bccf98d44f8697aadb22792
+PKG_MAINTAINER:=Nicolò Veronese <nicveronese@gmail.com>
 PKG_LICENSE:=GPL-2.0
 
 include $(INCLUDE_DIR)/package.mk
