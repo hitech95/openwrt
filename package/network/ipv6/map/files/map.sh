@@ -120,6 +120,10 @@ proto_map_setup() {
 			cfgstr="$cfgstr remote.ea-len $(eval "echo \$RULE_${i}_EALEN") remote.psid-offset $(eval "echo \$RULE_${i}_OFFSET")"
 			echo insert $link $cfgstr > /proc/net/nat46/control
 		done
+
+        if [ $(eval "echo \$RULE_COUNT") = 1 ] && [ -z "$(eval "echo \$RULE_${k}_PORTSETS")" ]; then
+        	proto_add_ipv4_address $(eval "echo \$RULE_${k}_IPV4ADDR") "" "" ""
+        fi
 	else
 		proto_notify_error "$cfg" "UNSUPPORTED_TYPE"
 		proto_block_restart "$cfg"
