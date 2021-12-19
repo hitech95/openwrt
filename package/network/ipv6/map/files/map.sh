@@ -127,6 +127,67 @@ proto_map_setup() {
 
 	proto_add_ipv4_route "0.0.0.0" 0
 	proto_add_data
+
+	# Store configuration in data.map obj
+	json_add_object "map"
+	json_add_string "map-type" "$maptype"
+	json_add_int bmr $(eval "echo \$RULE_BMR")
+
+	# Compatibility fields with lw4o6 and map-e
+	# Extract data from Basic Mapping Rule
+	json_add_string local $(eval "echo \$RULE_${k}_IPV6ADDR")
+	if [ -n "$(eval "echo \$RULE_${k}_BR")" ]; then
+		json_add_string remote $(eval "echo \$RULE_${k}_BR")
+	else
+		json_add_string remote $(eval "echo \$RULE_${i}_DMR | cut -d '/' -f 1")
+	fi
+	json_add_string link $(eval "echo \$RULE_${k}_PD6IFACE")
+
+	json_add_array rule
+		for i in $(seq $RULE_COUNT); do
+			json_add_object ""
+			json_add_boolean fmr $(eval "echo \$RULE_${i}_FMR")
+			json_add_int "ea-len" $(eval "echo \$RULE_${i}_EALEN")
+			json_add_int "psid-len" $(eval "echo \$RULE_${i}_PSIDLEN")
+			json_add_int "psid-offset" $(eval "echo \$RULE_${i}_OFFSET")
+
+			json_add_object "ipv4-prefix"
+			json_add_string address $(eval "echo \$RULE_${i}_IPV4PREFIX")
+			json_add_int mask $(eval "echo \$RULE_${i}_PREFIX4LEN")
+			json_close_object
+
+			json_add_object "ipv6-prefix"
+			json_add_string address $(eval "echo \$RULE_${i}_IPV6PREFIX")
+			json_add_int mask $(eval "echo \$RULE_${i}_PREFIX6LEN")
+			json_close_object
+
+			json_add_object "ipv4-address"
+			json_add_string address $(eval "echo \$RULE_${i}_IPV4ADDR")
+			json_add_int mask $(eval "echo \$RULE_${i}_ADDR4LEN")
+			json_close_object
+
+			json_add_object "ipv6-address"
+			json_add_string address $(eval "echo \$RULE_${i}_IPV6ADDR")
+			json_add_int mask $(eval "echo \$RULE_${i}_PD6LEN")
+			json_close_object
+
+			if [ -n "$(eval "echo \$RULE_${i}_DMR")" ]; then
+				json_add_object "dmr-address"
+				json_add_string address $(eval "echo \$RULE_${i}_DMR | cut -d '/' -f 1")
+				json_add_int mask $(eval "echo \$RULE_${i}_DMR | cut -d '/' -f 2")
+				json_close_object
+			fi
+
+			json_add_array "port-set"
+				for portset in $(eval "echo \$RULE_${i}_PORTSETS"); do
+					json_add_string "" "$portset"
+				done
+			json_close_array
+			json_close_object
+		done
+	json_close_array
+	json_close_object
+
 	[ -n "$zone" ] && json_add_string zone "$zone"
 
 	json_add_array firewall
