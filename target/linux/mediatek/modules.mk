@@ -37,3 +37,58 @@ define KernelPackage/iio-mt6577-auxadc
   $(call AddDepends/iio)
 endef
 $(eval $(call KernelPackage,iio-mt6577-auxadc))
+
+define KernelPackage/sound-soc-mt79xx
+  TITLE:=MT79xx SoC sound support
+  DEPENDS:=@TARGET_mediatek_filogic +kmod-sound-soc-core
+  KCONFIG:=\
+	CONFIG_SND_SOC_MEDIATEK \
+	CONFIG_SND_SOC_MT79XX
+  FILES:= \
+	$(LINUX_DIR)/sound/soc/mediatek/common/snd-soc-mtk-common.ko \
+	$(LINUX_DIR)/sound/soc/mediatek/mt79xx/snd-soc-mt79xx-afe.ko
+  AUTOLOAD:=$(call AutoLoad,57,snd-soc-mtk-common snd-soc-mt79xx-afe)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-soc-mt79xx/description
+ Support for MT79xx Platform sound
+endef
+
+$(eval $(call KernelPackage,sound-soc-mt79xx))
+
+define KernelPackage/sound-soc-mt79xx-wm8960
+  TITLE:=MT79xx WM8960 sound card
+  DEPENDS:=@TARGET_mediatek_filogic +kmod-regmap-i2c +kmod-sound-soc-mt79xx
+  KCONFIG:=\
+	CONFIG_SND_SOC_MT79XX_WM8960
+  FILES:= \
+	$(LINUX_DIR)/sound/soc/mediatek/mt79xx/mt79xx-wm8960.ko \
+	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8960.ko
+  AUTOLOAD:=$(call AutoLoad,57,regmap-i2c snd-soc-mt79xx-afe snd-soc-wm8960  mt79xx-wm8960)
+  $(call AddDepends/sound,+kmod-regmap-i2c)
+endef
+
+define KernelPackage/sound-soc-mt79xx-wm8960/description
+ Support for MT79xx WM8960 sound card
+endef
+
+$(eval $(call KernelPackage,sound-soc-mt79xx-wm8960))
+
+define KernelPackage/sound-soc-mt79xx-si3218x
+  TITLE:=MT79xx SI3218x SLIC
+  DEPENDS:=@TARGET_mediatek +kmod-sound-soc-mt79xx
+  KCONFIG:=\
+	CONFIG_SND_SOC_MT79XX_SI3218X
+  FILES:= \
+	$(LINUX_DIR)/sound/soc/mediatek/mt79xx/mt79xx-si3218x.ko \
+	$(LINUX_DIR)/sound/soc/codecs/snd-soc-slic-dummy.ko
+  AUTOLOAD:=$(call AutoLoad,57, snd-soc-mt79xx-afe snd-soc-slic-dummy mt79xx-si3218x)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-soc-mt79xx-si3218x/description
+ Support for MT79xx and dummy si3218x sound card
+endef
+
+$(eval $(call KernelPackage,sound-soc-mt79xx-si3218x))
