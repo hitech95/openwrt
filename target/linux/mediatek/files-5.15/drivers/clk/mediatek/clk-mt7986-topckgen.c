@@ -43,6 +43,7 @@ static const struct mtk_fixed_factor top_divs[] = {
 	FACTOR(CLK_TOP_MMPLL_D3_D8, "top_mmpll_d3_d8", "mmpll", 1, 24),
 	FACTOR(CLK_TOP_MMPLL_U2PHY, "top_mmpll_u2phy", "mmpll", 1, 30),
 	/* APLL2 */
+	FACTOR(CLK_TOP_CB_APLL2_196M, "cb_apll2_196m", "apll2", 1, 1),
 	FACTOR(CLK_TOP_APLL2_D4, "top_apll2_d4", "apll2", 1, 4),
 	/* NET1PLL */
 	FACTOR(CLK_TOP_NET1PLL_D4, "top_net1pll_d4", "net1pll", 1, 4),
@@ -157,7 +158,7 @@ static const char *const conn_mcusys_parents[] __initconst = { "top_xtal",
 static const char *const eip_b_parents[] __initconst = { "top_xtal",
 							 "net2pll" };
 
-static const char *const aud_l_parents[] __initconst = { "top_xtal", "apll2",
+static const char *const aud_l_parents[] __initconst = { "top_xtal", "cb_apll2_196m",
 							 "top_mpll_d8_d2" };
 
 static const char *const a_tuner_parents[] __initconst = { "top_xtal",
