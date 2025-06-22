@@ -37,3 +37,29 @@ define KernelPackage/iio-mt6577-auxadc
   $(call AddDepends/iio)
 endef
 $(eval $(call KernelPackage,iio-mt6577-auxadc))
+
+define KernelPackage/sound-soc-mt7986-si3218x
+  TITLE:=Mediatek MT7986 sound card with SI3218x SLIC codec
+  KCONFIG:=CONFIG_SND_SOC_MT7986_SI3218X
+  FILES:=$(LINUX_DIR)/sound/soc/mediatek/mt7986/mt7986-si3218x.ko
+  AUTOLOAD:=$(call AutoLoad,57,mt7986-si3218x)
+  DEPENDS:=@TARGET_mediatek_filogic +kmod-sound-soc-slic-dummy +kmod-sound-soc-mt7986
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-soc-mt7986-si3218x/description
+  Support for use the SiLab si3218x codec as a dummy sound card
+endef
+
+$(eval $(call KernelPackage,sound-soc-mt7986-si3218x))
+
+define KernelPackage/sound-soc-slic-dummy
+  TITLE:=Dummy SLIC codec support
+  KCONFIG:=CONFIG_SND_SOC_SLIC_DUMMY
+  FILES:=$(LINUX_DIR)/sound/soc/codecs/snd-soc-slic-dummy.ko
+  DEPENDS:=+kmod-sound-soc-core
+  AUTOLOAD:=$(call AutoProbe,snd-soc-slic-dummy)
+  $(call AddDepends/sound)
+endef
+
+$(eval $(call KernelPackage,sound-soc-slic-dummy))
