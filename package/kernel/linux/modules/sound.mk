@@ -238,7 +238,7 @@ $(eval $(call KernelPackage,sound-soc-imx))
 
 define KernelPackage/sound-soc-mt7986
   TITLE:=MediaTek MT7986 Audio support
-  KCONFIG:=CONFIG_SND_SOC_MT7986 CONFIG_SND_SOC_MT7986_WM8960
+  KCONFIG:=CONFIG_SND_SOC_MT7986
   FILES:= \
 	$(LINUX_DIR)/sound/soc/mediatek/common/snd-soc-mtk-common.ko \
 	$(LINUX_DIR)/sound/soc/mediatek/mt7986/snd-soc-mt7986-afe.ko
