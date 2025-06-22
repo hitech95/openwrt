@@ -1,0 +1,38 @@
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -223,6 +223,7 @@ config SND_SOC_ALL_CODECS
+ 	imply SND_SOC_SI476X
+ 	imply SND_SOC_SIMPLE_AMPLIFIER
+ 	imply SND_SOC_SIMPLE_MUX
++	imply SND_SOC_SLIC_DUMMY
+ 	imply SND_SOC_SMA1303
+ 	imply SND_SOC_SPDIF
+ 	imply SND_SOC_SRC4XXX_I2C
+@@ -1680,6 +1681,9 @@ config SND_SOC_SIMPLE_MUX
+ 	tristate "Simple Audio Mux"
+ 	depends on GPIOLIB
+ 
++config SND_SOC_SLIC_DUMMY
++	tristate "SLIC Dummy Codec"
++
+ config SND_SOC_SMA1303
+ 	tristate "Iron Device SMA1303 Audio Amplifier"
+ 	depends on I2C
+--- a/sound/soc/codecs/Makefile
++++ b/sound/soc/codecs/Makefile
+@@ -253,6 +253,7 @@ snd-soc-sigmadsp-objs := sigmadsp.o
+ snd-soc-sigmadsp-i2c-objs := sigmadsp-i2c.o
+ snd-soc-sigmadsp-regmap-objs := sigmadsp-regmap.o
+ snd-soc-si476x-objs := si476x.o
++snd-soc-slic-dummy-objs := slic-dummy.o
+ snd-soc-sma1303-objs := sma1303.o
+ snd-soc-spdif-tx-objs := spdif_transmitter.o
+ snd-soc-spdif-rx-objs := spdif_receiver.o
+@@ -633,6 +634,7 @@ obj-$(CONFIG_SND_SOC_SIGMADSP)	+= snd-so
+ obj-$(CONFIG_SND_SOC_SIGMADSP_I2C)	+= snd-soc-sigmadsp-i2c.o
+ obj-$(CONFIG_SND_SOC_SIGMADSP_REGMAP)	+= snd-soc-sigmadsp-regmap.o
+ obj-$(CONFIG_SND_SOC_SI476X)	+= snd-soc-si476x.o
++obj-$(CONFIG_SND_SOC_SLIC_DUMMY)	+= snd-soc-slic-dummy.o
+ obj-$(CONFIG_SND_SOC_SMA1303)	+= snd-soc-sma1303.o
+ obj-$(CONFIG_SND_SOC_SPDIF)	+= snd-soc-spdif-rx.o snd-soc-spdif-tx.o
+ obj-$(CONFIG_SND_SOC_SRC4XXX)	+= snd-soc-src4xxx.o
