@@ -153,6 +153,23 @@
 			default-state = "off";
 		};
 	};
+
+
+	sound_si3218x {
+		compatible = "mediatek,mt7986-si3218x-machine";
+		mediatek,platform = <&afe>;
+		mediatek,codec = <&dummy_codec>;
+
+		status = "okay";
+	};
+
+	dummy_codec:dummy_codec {
+		compatible = "d2,slic-dummy-codec";
+	};
+};
+
+&afe {
+	status = "okay";
 };
 
 &spi0 {
