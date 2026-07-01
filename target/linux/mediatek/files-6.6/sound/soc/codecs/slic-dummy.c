@@ -16,15 +16,6 @@
 #include <linux/debugfs.h>
 #include <sound/pcm_params.h>
 
-#define STUB_RATES	SNDRV_PCM_RATE_8000_192000
-#define STUB_FORMATS	(SNDRV_PCM_FMTBIT_S16_LE | \
-			SNDRV_PCM_FMTBIT_U16_LE)
-
-struct dummy_chip {
-	struct device *dev;
-	struct snd_soc_component *component;
-};
-
 static int dummy_component_probe(struct snd_soc_component *component)
 {
 	dev_info(component->dev, "%s\n", __func__);
@@ -33,9 +24,7 @@ static int dummy_component_probe(struct snd_soc_component *component)
 
 static void dummy_component_remove(struct snd_soc_component *component)
 {
-	struct dummy_chip *chip = snd_soc_component_get_drvdata(component);
 	dev_info(component->dev, "%s\n", __func__);
-	chip->component = NULL;
 }
 
 static const struct snd_soc_dapm_widget dummy_component_dapm_widgets[] = {
@@ -44,8 +33,8 @@ static const struct snd_soc_dapm_widget dummy_component_dapm_widgets[] = {
 };
 
 static const struct snd_soc_dapm_route dummy_component_dapm_routes[] = {
-	{ "VOUTP", NULL, "aif_playback"},
-	{ "aif_capture", NULL, "VINP"},
+	{ "VOUTP", NULL, "Playback"},
+	{ "Capture", NULL, "VINP"},
 };
 
 static const struct snd_soc_component_driver dummy_component_driver = {
@@ -66,15 +55,15 @@ static int dummy_component_aif_hw_params(struct snd_pcm_substream *substream,
 	int word_len = params_physical_width(hw_params);
 	int aud_bit = params_width(hw_params);
 
-	dev_dbg(dai->dev, "format: 0x%08x\n", params_format(hw_params));
-	dev_dbg(dai->dev, "rate: 0x%08x\n", params_rate(hw_params));
-	dev_dbg(dai->dev, "word_len: %d, aud_bit: %d\n", word_len, aud_bit);
-	if (word_len > 32 || word_len < 16) {
+	dev_info(dai->dev, "format: 0x%08x\n", params_format(hw_params));
+	dev_info(dai->dev, "rate: 0x%08x\n", params_rate(hw_params));
+	dev_info(dai->dev, "word_len: %d, aud_bit: %d\n", word_len, aud_bit);
+	if (word_len != 16) {
 		dev_err(dai->dev, "not supported word length\n");
 		return -ENOTSUPP;
 	}
 
-	dev_dbg(dai->dev, "%s: --\n", __func__);
+	dev_info(dai->dev, "%s: --\n", __func__);
 	return 0;
 }
 
@@ -83,20 +72,20 @@ static const struct snd_soc_dai_ops dummy_component_aif_ops = {
 };
 
 static struct snd_soc_dai_driver dummy_codec_dai = {
-	.name = "proslic_spi-aif",
+	.name = "wm8960-hifi",
 	.playback = {
-		.stream_name	= "aif_playback",
+		.stream_name	= "Playback",
 		.channels_min	= 1,
 		.channels_max	= 2,
-		.rates		= STUB_RATES,
-		.formats	= STUB_FORMATS,
+		.rates		= SNDRV_PCM_RATE_16000,
+		.formats	= SNDRV_PCM_FMTBIT_S16_LE,
 	},
 	.capture = {
-		.stream_name	= "aif_capture",
+		.stream_name	= "Capture",
 		.channels_min	= 1,
 		.channels_max	= 2,
-		.rates = STUB_RATES,
-		.formats = STUB_FORMATS,
+		.rates 		= SNDRV_PCM_RATE_16000,
+		.formats 	= SNDRV_PCM_FMTBIT_S16_LE,
 	},
 	/* dai properties */
 	.symmetric_rate = 1,
@@ -106,10 +95,10 @@ static struct snd_soc_dai_driver dummy_codec_dai = {
 	.ops = &dummy_component_aif_ops,
 };
 
-static int slic_dummy_codec_probe(struct platform_device *pdev)
+static int dummy_codec_probe(struct platform_device *pdev)
 {
 	int ret;
-	dev_err(&pdev->dev, "%s: begin probe node: %s\n", __func__, pdev->name);
+	dev_info(&pdev->dev, "%s: begin probe node: %s\n", __func__, pdev->name);
 
 	ret = snd_soc_register_component(&pdev->dev, &dummy_component_driver,
 				      &dummy_codec_dai, 1);
@@ -121,30 +110,30 @@ static int slic_dummy_codec_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int slic_dummy_codec_remove(struct platform_device *pdev)
+static int dummy_codec_remove(struct platform_device *pdev)
 {
 	snd_soc_unregister_component(&pdev->dev);
 	return 0;
 }
 
 #ifdef CONFIG_OF
-static const struct of_device_id slic_dummy_codec_dt_match[] = {
-	{.compatible = "d2,slic-dummy-codec",},
+static const struct of_device_id dummy_codec_dt_match[] = {
+	{.compatible = "dummy-codec",},
 	{}
 };
-MODULE_DEVICE_TABLE(of, slic_dummy_codec_dt_match);
+MODULE_DEVICE_TABLE(of, dummy_codec_dt_match);
 #endif
 
-static struct platform_driver slic_dummy_codec = {
+static struct platform_driver dummy_codec = {
 	.driver = {
-	   .name = "slic-dummy-codec",
-	   .of_match_table = slic_dummy_codec_dt_match,
+	   .name = "dummy-codec",
+	   .of_match_table = dummy_codec_dt_match,
 	},
-	.probe = slic_dummy_codec_probe,
-	.remove = slic_dummy_codec_remove
+	.probe = dummy_codec_probe,
+	.remove = dummy_codec_remove
 };
-module_platform_driver(slic_dummy_codec);
+module_platform_driver(dummy_codec);
 
 /* Module information */
-MODULE_DESCRIPTION("slic dummy codec");
+MODULE_DESCRIPTION("Dummy ASoC Codec");
 MODULE_LICENSE("GPL");
