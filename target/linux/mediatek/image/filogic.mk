@@ -3304,9 +3304,10 @@ define Device/tplink_tl-xtr8488
 endef
 TARGET_DEVICES += tplink_tl-xtr8488
 
-define Device/tplink_vx830v
+define Device/tplink_vx830v-stock
   DEVICE_VENDOR := TP-Link
   DEVICE_MODEL := VX830V
+  DEVICE_VARIANT := (stock layout)
   DEVICE_DTS := mt7986a-tplink-vx830v
   DEVICE_DTS_DIR := ../dts
   UBINIZE_OPTS := -E 5
@@ -3322,7 +3323,39 @@ define Device/tplink_vx830v
 	    kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware \
 	    kmod-leds-gpio kmod-ledtrig-network kmod-usb-ledtrig-usbport
 endef
-TARGET_DEVICES += tplink_vx830v
+TARGET_DEVICES += tplink_vx830v-stock
+
+define Device/tplink_vx830v-ubootmod
+  DEVICE_VENDOR := TP-Link
+  DEVICE_MODEL := VX830V
+  DEVICE_VARIANT := (OpenWrt U-Boot layout)
+  DEVICE_DTS := mt7986a-tplink-vx830v-ubootmod
+  DEVICE_DTS_DIR := ../dts
+  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
+  IMAGES := sysupgrade.itb
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_IN_UBI := 1
+  KERNEL_INITRAMFS := kernel-bin | lzma | \
+	    fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
+  IMAGE/sysupgrade.itb := append-kernel | \
+	    fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | append-metadata
+  ARTIFACTS := preloader.bin bl31-uboot.fip
+  ARTIFACT/preloader.bin := mt7986-bl2 spim-nand-ddr3
+  ARTIFACT/bl31-uboot.fip := mt7986-bl31-uboot tp-link_vx830v
+  ifeq ($(IB),)
+  ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+    ARTIFACTS += initramfs-factory.ubi
+    ARTIFACT/initramfs-factory.ubi := append-image-stage initramfs-recovery.itb | ubinize-kernel
+  endif
+  endif
+  DEVICE_PACKAGES := kmod-sfp kmod-usb3 \
+	    kmod-phy-airoha-en8811h airoha-en8811h-firmware \
+	    kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware \
+	    kmod-leds-gpio kmod-ledtrig-network kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += tplink_vx830v-ubootmod
 
 define Device/ubnt_unifi-6-plus
   DEVICE_VENDOR := Ubiquiti

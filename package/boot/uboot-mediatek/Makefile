@@ -966,6 +966,18 @@ define U-Boot/mt7986_tplink_tl-xtr8488
   DEPENDS:=+trusted-firmware-a-mt7986-spim-nand-ddr4
 endef
 
+define U-Boot/mt7986_tplink_vx830v
+  NAME:=TP-LINK VX830V
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=tplink_vx830v-ubootmod
+  UBOOT_CONFIG:=mt7986_tplink_vx830v
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7986
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7986-spim-nand-ddr3
+endef
+
 define U-Boot/mt7986_xiaomi_redmi-router-ax6000
   NAME:=Xiaomi Redmi AX6000
   BUILD_SUBTARGET:=filogic
@@ -1336,6 +1348,7 @@ UBOOT_TARGETS := \
 	mt7986_tplink_tl-xdr6086 \
 	mt7986_tplink_tl-xdr6088 \
 	mt7986_tplink_tl-xtr8488 \
+	mt7986_tplink_vx830v \
 	mt7986_xiaomi_redmi-router-ax6000 \
 	mt7986_zyxel_ex5601-t0 \
 	mt7986_zyxel_wx5600-t0 \
